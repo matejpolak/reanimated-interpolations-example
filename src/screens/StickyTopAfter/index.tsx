@@ -1,4 +1,27 @@
 import type { FC } from 'react'
-import { Text } from 'react-native'
+import { useAnimatedScrollHandler, useSharedValue } from 'react-native-reanimated'
 
-export const StickyTopAfter: FC = () => <Text>StickyTopAfter</Text>
+import { StickyItem } from './components/StickyItem'
+
+import { ExampleScrollView } from '../../components/ExampleScrollView'
+import { PlaceholderItem } from '../../components/PlaceholderItem'
+
+const items = [false, false, false, false, true, false, false, false, false, false, false]
+
+export const StickyTopAfter: FC = () => {
+  const scrollY = useSharedValue(0)
+  const onScroll = useAnimatedScrollHandler(({ contentOffset: { y } }) => {
+    scrollY.value = y
+  })
+  return (
+    <ExampleScrollView onScroll={onScroll} scrollEventThrottle={16}>
+      {items.map((shouldBeSticky, index) =>
+        shouldBeSticky ? (
+          <StickyItem key={index} scrollY={scrollY} />
+        ) : (
+          <PlaceholderItem key={index} />
+        ),
+      )}
+    </ExampleScrollView>
+  )
+}
